@@ -6,6 +6,8 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use App\User;
 use App\Chat;
 use App\DetailChat;
@@ -68,9 +70,49 @@ class NewNotif extends Notification implements ShouldQueue
         return [
             'user_id' => $this->user->id,
             'username'=> $this->user->username,
-            'no_detail_chat' => $this->chat->no_detail_chat,
-            'id_user_from' => $this->detailChat->id_user_from,
-            'id_user_to' => $this->detailChat->id_user_to
+            'chat' => $this->detailChat->chat,
         ];
     }
+
+    public function toBroadcast($notifiable)
+    {
+        return new BroadcastMessage([
+            'user_id' => $this->user->id,
+            'username'=> $this->user->username,
+            'chat' => $this->detailChat->chat,
+        ]);
+    }
+
+    public function notifications($id)
+    {
+        $user = App\User::find($id);
+
+        foreach ($user->notifications as $notification) {
+        echo $notification->type;
+        }
+    }
+
+    public function unreadNotifications($id)
+    {
+        $user = User::find($id);
+
+        foreach ($user->unreadNotifications as $notification) {
+            echo $notification->type;
+        }
+    }
+
+    public function chatreadAt($id)
+    {
+        $user = App\User::find($id);
+
+        $user->unreadNotifications()->update(['read_at' => now()]);
+    }
+
+    public function chatDelete($id)
+    {
+        $user = App\User::find($id);
+
+        $user->notifications()->delete();
+    }
+
 }

@@ -448,7 +448,9 @@ class ComposerStaticInit99625b98842e7adef97ef7163cf7cae8
     );
 
     public static $classMap = array (
+        'App\\Chat' => __DIR__ . '/../..' . '/app/Chat.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+        'App\\DetailChat' => __DIR__ . '/../..' . '/app/DetailChat.php',
         'App\\Events\\MessagePushed' => __DIR__ . '/../..' . '/app/Events/MessagePushed.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
@@ -469,6 +471,8 @@ class ComposerStaticInit99625b98842e7adef97ef7163cf7cae8
         'App\\Http\\Middleware\\TrimStrings' => __DIR__ . '/../..' . '/app/Http/Middleware/TrimStrings.php',
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Notifications\\NewNotif' => __DIR__ . '/../..' . '/app/Notifications/NewNotif.php',
+        'App\\Observers\\ChatObserver' => __DIR__ . '/../..' . '/app/Observers/ChatObservers.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',

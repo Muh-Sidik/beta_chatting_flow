@@ -42,18 +42,34 @@ class MessageChatController extends Controller
         $chat = Chat::where('id_user_from', $from)
         ->where('id_user_to', $to)->count();
 
-        if($chat <= 0) {
-            $generate = $chat+1;
+        if($chat <= 0) { //belum pernah chat maka jomblo :v
+            $generate = $chat+1; 
             $generate = '00'. $generate;
             $insert = new Chat();
             $insert->no_detail_chat = $generate;
             $insert->id_user_from = $request->input('id_user_from');
             $insert->id_user_to = $request->input('id_user_to');
-            if($insert->save()) {
+            $detailChat = new DetailChat();
+            $detailChat->no_detail_chat = $generate;
+            $detailChat->chat = $request->input('chat');
+            $detailChat->id_user_from = $request->input('id_user_from');
+            $detailChat->id_user_to = $request->input('id_user_to');
+            if($detailChat->save()) {
                 return response()->json(['status' => 'Pesan terkirim!'], 200);
+            }
+        } else {
+            $detailChat = new DetailChat();
+            $insert->no_detail_chat = $request->input('no_detail_chat');
+            $insert->chat = $request->input('chat');
+            $insert->id_user_from = $request->input('id_user_from');
+            $insert->id_user_to = $request->input('id_user_to');
+            if($insert->save()) {
+                return response()->json(['status' => 'Pesan terkirim mamank!'], 200);
             }
         }
     }
+
+    
 
 
 }

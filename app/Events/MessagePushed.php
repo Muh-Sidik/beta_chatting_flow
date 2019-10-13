@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Chat;
 use App\User;
 use App\DetailChat;
 use Illuminate\Broadcasting\Channel;
@@ -25,11 +26,13 @@ class MessagePushed implements ShouldBroadcast
 
     public $message;
     public $user;
+    public $chat;
     
-    public function __construct(User $user, DetailChat $message)
+    public function __construct(User $user, DetailChat $message, Chat $chat)
     {
         $this->user = $user;
         $this->message = $message;
+        $this->chat = $chat;
     }
 
     /**
@@ -39,11 +42,11 @@ class MessagePushed implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return ['my-channel'];
+        return ['BChat-development'];
     }
 
-    public function broadcastAs()
+    public function broadcastAs($user, $message, $chat)
     {
-        return 'my-event';
+        return event(new MessagePushed($user, $message, $chat));
     }
 }

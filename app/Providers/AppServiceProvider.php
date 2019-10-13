@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\DetailChat;
 use App\Observers\ChatObserver;
 use Illuminate\Support\ServiceProvider;
+use  Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {

@@ -40,12 +40,12 @@ class User extends Authenticatable implements JWTSubject
 
     public function chat()
     {
-        return $this->hasMany(Chat::class, '');
+        return $this->hasMany(Chat::class);
     }
 
     public function detailChat()
     {
-        return $this->hasMany(DetailChat::class, '');
+        return $this->hasMany(DetailChat::class);
     }
 
     public function getJWTIdentifier()

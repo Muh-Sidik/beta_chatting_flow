@@ -19,7 +19,7 @@ class CreateDetailChatTable extends Migration
             $table->bigInteger('id_user_from')->unsigned();
             $table->bigInteger('id_user_to')->unsigned();
             $table->longText('chat');
-            $table->tinyInteger('status');
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }
