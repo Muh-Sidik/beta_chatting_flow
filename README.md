@@ -1,4 +1,4 @@
 # beta_chatting_flow
-proyek BChat
+Project BChat
 
 Beta Chatting Application
