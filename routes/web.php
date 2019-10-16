@@ -20,4 +20,6 @@ Route::post('/login', 'UserChatController@login');
 
 Route::get('/user/{id}', 'MessageChatController@index');
 Route::get('/chat/{id}', 'MessageChatController@getDetail');
-Route::get('/chat/{no_detail_chat}', 'MessageChatController@search');
+Route::get('/search/{no_detail_chat}', 'MessageChatController@search');
+
+Route::post('/messages', 'MessageChatController@sendchat');
