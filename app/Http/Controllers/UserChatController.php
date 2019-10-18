@@ -26,37 +26,41 @@ class UserChatController extends Controller
         return response()->json(compact('token'));
     }
 
-    protected function respondWithToken($token)
+    protected function respondWithToken($token, $id)
     {
     return response()->json([
-        'access_token' => $token,
-        'token_type' => 'bearer',
-        'expires_in' => auth('api')->factory()->getTTL() * 60
+        'access_token'  => $token,
+        'token_type'    => 'bearer',
+        'expires_in'    => auth('api')->factory()->getTTL() * 60,
+        'detail_user'   => $id
     ]);
     }
 
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'username' => 'required|string|max:255',
-            'phone' => 'required|string|max:14|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'username' => 'required|string|max:255',
+        //     'phone' => 'required|string|max:14',
+        //     'password' => 'required|string|min:6',
+        // ]);
 
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
-        }
+        // if($validator->fails()){
+        //     return response()->json($validator->errors()->toJson(), 400);
+        // }
 
         $user = User::create([
-            'username' => $request->input('username'),
-            'phone' => $request->input('phone'),
-            'password' => bcrypt($request->input('password')),
-            'photo' => asset('img/profil.jpg')
+            'username'  => $request->input('username'),
+            'phone'     => $request->input('phone'),
+            'password'  => bcrypt($request->input('password')),
+            'photo'     => asset('img/profil.jpg')
         ]);
 
-        $token = JWTAuth::fromUser($user);
+        $token = auth()->login($user);
+        $get = User::where('phone', $request->phone);
+        $id = $get->first(); 
+        return $this->respondWithToken($token, $id);
 
-        return response()->json(compact('user','token'),201);
+        // return response()->json(['send'=> 'data masuk cuk!'],201);
     }
 
     public function getAuthenticatedUser()
