@@ -17,6 +17,7 @@ Route::get('/', function () {
 
 Route::post('/register', 'UserChatController@register');
 Route::post('/login', 'UserChatController@login');
+Route::post('/cek', 'UserChatController@get_where_phone');
 
 Route::get('/user/{id}', 'MessageChatController@index');
 Route::get('/chat/{id}', 'MessageChatController@getDetail');

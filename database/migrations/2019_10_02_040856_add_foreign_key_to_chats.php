@@ -14,8 +14,8 @@ class AddForeignKeyToChats extends Migration
     public function up()
     {
         Schema::table('chats', function (Blueprint $table) {
-            $table->foreign('id_user_to')->references('id')->on('users');
-            $table->foreign('id_user_from')->references('id')->on('users');
+            $table->foreign('id_user1')->references('id')->on('users');
+            $table->foreign('id_user2')->references('id')->on('users');
         });
     }
 

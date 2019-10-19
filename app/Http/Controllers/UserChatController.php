@@ -14,7 +14,9 @@ class UserChatController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only('phone', 'password');
-
+        $get = User::where('phone', $request->phone);
+        $id = $get->first();
+        
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
                 return response()->json(['error' => 'invalid_credentials'], 400);
@@ -23,7 +25,19 @@ class UserChatController extends Controller
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
 
-        return response()->json(compact('token'));
+        // return response()->json(compact('token'));
+        return $this->respondWithToken($token, $id);
+    }
+
+    public function get_where_phone(Request $request)
+    {
+        $user = User::where('phone', $request->input('phone'))
+        ->first();
+        if($user == null) {
+        return response()->json(['send' => 'NO', 404]);
+        } else {
+            return response()->json(['send' => 'YES', 200]);
+        }
     }
 
     protected function respondWithToken($token, $id)

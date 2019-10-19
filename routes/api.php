@@ -19,5 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('/register', 'UserChatController@register');
 Route::post('/login', 'UserChatController@login');
+Route::post('/cek', 'UserChatController@get_where_phone');
 
 Route::post('/messages', 'MessageChatController@sendchat');

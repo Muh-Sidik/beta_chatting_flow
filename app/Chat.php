@@ -20,4 +20,9 @@ class Chat extends Model
     {
         return $this->belongsTo(User::class, 'id_user_to');
     }
+
+    // public function get_no_chat()
+    // {
+    //     return $this->;
+    // }
 }

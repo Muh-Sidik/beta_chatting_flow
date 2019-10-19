@@ -5,21 +5,26 @@ namespace App\Http\Controllers;
 use App\DetailChat;
 use App\User;
 use App\Chat;
+use App\Events\MessagePushed;
 use Illuminate\Http\Request;
 
 class MessageChatController extends Controller
 {
     public function index($id)
     {
+        
         $profil = User::find($id);
-        $chat = \App\Chat::where('chats.id_user_from', $id)->get();
+        $chat = \App\Chat::where('chats.id_user1', $id)
+        ->select('*','users.username AS lawan', 'users.photo AS avatar')
+        ->join('users','users.id', '=', 'chats.id_user2')->get();
         // $detail = \App\DetailChat::where('detail_chats.no_detail_chat', $id)->get();
 
-        return response()->json([$profil, $chat], 200);
+        return response()->json($chat, 200);
     }
 
     public function getDetail($id)
     {
+        
         $detail = \App\DetailChat::where('detail_chats.no_detail_chat', $id)
         ->join('users','users.id', '=', 'detail_chats.id_user_from')
         ->get();
@@ -29,6 +34,7 @@ class MessageChatController extends Controller
 
     public function search($id)
     {
+        // event(new MessagePushed($user, $message, $chat));
         $search = \App\DetailChat::where('detail_chats.chat', 'like', $_GET['search'])
         ->where('detail_chats.no_detail_chat', $id)
         ->join('users','users.id', '=', 'detail_chats.id_user_from')
@@ -39,10 +45,11 @@ class MessageChatController extends Controller
 
     public function sendchat(Request $request)
     {
-        $from = $request->input('id_user_from');
-        $to = $request->input('id_user_to');
-        $chat = Chat::where('id_user_from', $from)
-        ->where('id_user_to', $to)->count();
+        // event(new MessagePushed($user, $message, $chat));
+        $from = $request->input('id_user1');
+        $to = $request->input('id_user2');
+        $chat = Chat::where('id_user1', $from)
+        ->where('id_user2', $to)->count();
         
         if($chat <= 0) { //belum pernah chat maka jomblo :v
             $chat = Chat::count();
@@ -50,23 +57,26 @@ class MessageChatController extends Controller
             $generate = '00'. $generate;
             $insert = new Chat();
             $insert->no_detail_chat = $generate;
-            $insert->id_user_from = $from;
-            $insert->id_user_to = $to;
+            $insert->id_user1 = $from;
+            $insert->id_user2 = $to;
             $detailChat = new DetailChat();
             $detailChat->no_detail_chat = $generate;
             $detailChat->chat = $request->input('chat');
-            $detailChat->id_user_from = $from;
-            $detailChat->id_user_to = $to;
+            $detailChat->id_user_from = $request->input('id_user_from');
+            $detailChat->id_user_to = $request->input('id_user_to');
             if($insert->save() && $detailChat->save()) {
                 return response()->json(['status' => 'Pesan terkirim!'], 200);
             }
         } else {
+            $room = Chat::where('id_user1', $from)
+            ->where('id_user2', $to)->first();
+            // dd($room);
             $detailChat = new DetailChat();
-            $insert->no_detail_chat = $request->input('no_detail_chat');
-            $insert->chat = $request->input('chat');
-            $insert->id_user_from = $from;
-            $insert->id_user_to = $to;
-            if($insert->save()) {
+            $detailChat->no_detail_chat = $room->no_detail_chat;
+            $detailChat->chat = $request->input('chat');
+            $detailChat->id_user_from = $request->input('id_user_from');
+            $detailChat->id_user_to = $request->input('id_user_to');
+            if($detailChat->save()) {
                 return response()->json(['status' => 'Pesan terkirim mamank!'], 200);
             }
         }

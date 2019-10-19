@@ -25,14 +25,14 @@ class MessagePushed implements ShouldBroadcast
      */
 
     public $message;
-    public $user;
-    public $chat;
+    // public $user;
+    // public $chat;
     
-    public function __construct(User $user, DetailChat $message, Chat $chat)
+    public function __construct($message)
     {
-        $this->user = $user;
+        // $this->user = $user;
         $this->message = $message;
-        $this->chat = $chat;
+        // $this->chat = $chat;
     }
 
     /**
@@ -42,11 +42,12 @@ class MessagePushed implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return ['BChat-development'];
+        return ['my-channel'];
     }
 
-    public function broadcastAs($user, $message, $chat)
+    public function broadcastAs()
     {
-        return event(new MessagePushed($user, $message, $chat));
+        return 'my-event';
+        // event(new MessagePushed($user, $message, $chat));
     }
 }
