@@ -19,3 +19,18 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('/register', 'UserChatController@register');
 Route::post('/login', 'UserChatController@login');
+
+// Route::get('/user/{id}', 'MessageChatController@index');
+// Route::get('/user/{id}', 'MessageChatController@getDetail');
+
+Route::get('/user/id/{id}', 'UserChatController@getUserById');
+Route::get('/user/phone/{phone}', 'UserChatController@getUserByPhone');
+Route::post('/update', 'UserChatController@update');
+
+
+Route::post('/chat', 'MessageChatController@chat');
+Route::post('/write', 'MessageChatController@write');
+
+Route::post('/messages', 'MessageChatController@sendchat');
+Route::post('/detailchat', 'MessageChatController@getDetail');
+Route::post('/searchchat', 'MessageChatController@search');
