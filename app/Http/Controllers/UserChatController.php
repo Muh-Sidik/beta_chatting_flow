@@ -40,6 +40,25 @@ class UserChatController extends Controller
         }
     }
 
+    public function qr($phone, $password, Request $request)
+    {
+        $credentials = $request->only('phone', 'password');
+        $get = User::where('phone', $phone)
+        ->where('password', $password);
+        $id = $get->first();
+        
+        try {
+            if (! $token = JWTAuth::attempt($credentials)) {
+                return response()->json(['error' => 'invalid_credentials'], 400);
+            }
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'could_not_create_token'], 500);
+        }
+
+        // return response()->json(compact('token'));
+        return $this->respondWithToken($token, $id);
+    }
+
     protected function respondWithToken($token, $id)
     {
     return response()->json([
@@ -100,6 +119,29 @@ class UserChatController extends Controller
         }
 
         return response()->json(compact('user'));
+    }
+
+    public function update_profil(Request $request)
+    {
+        // $validator = Validator::make($request->all(), [
+        //     'username' => 'required|string|max:255',
+        //     'phone' => 'required|string|max:14',
+        //     'password' => 'required|string|min:6',
+        // ]);
+        // if($validator->fails()){
+        //     return response()->json($validator->errors()->toJson(), 400);
+        // }
+        
+        $user = User::find($request->id);
+        $user->username       = $request->input('username');
+        $user->bio            = $request->input('bio');
+        $user->phone          = $request->input('phone');
+        $user->password       = $request->input('password');
+        $user->photo          = $request->input('photo');
+
+        $token = JWTAuth::fromUser($user);
+        
+        return response()->json(compact('user','token'),200);
     }
 
     

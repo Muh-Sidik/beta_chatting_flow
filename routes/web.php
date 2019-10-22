@@ -15,12 +15,32 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+//register
 Route::post('/register', 'UserChatController@register');
+
+//login
 Route::post('/login', 'UserChatController@login');
+
+//login phone
 Route::post('/cek', 'UserChatController@get_where_phone');
 
+//update profil
+Route::post('/update', 'UserChatController@update_profil');
+
+//check user
 Route::get('/user/{id}', 'MessageChatController@index');
+
+//get detailchat
 Route::get('/chat/{id}', 'MessageChatController@getDetail');
+
+//search
 Route::get('/search/{no_detail_chat}', 'MessageChatController@search');
 
+//kirim chat
 Route::post('/messages', 'MessageChatController@sendchat');
+
+//untuk QR
+Route::post('login/QR/{phone}/{password}', 'UserChatController@qr');
+
+//delete_chat
+Route::get('/delete', 'MessageChatController@delete_chat');
