@@ -11,10 +11,52 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 
 class UserChatController extends Controller
 {
+    public function getUserById(Request $request) {
+        $user = User::find($request->id);
+        return response()->json(compact('user'),201);
+    }
+
+    public function getUserByPhone(Request $request) {
+        $profil = User::where('phone', $request->phone)
+                    ->first();
+        return response()->json(compact('profil'),201);
+    }
+    
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => 'required|string|max:255',
+            'phone' => 'required|string|max:14',
+            'password' => 'required|string|min:6',
+        ]);
+
+        if($validator->fails()){
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+        $user = User::find($request->id);
+
+        $user->username       = $request->input('username');
+        $user->bio            = $request->input('bio');
+        $user->phone          = $request->input('phone');
+        $user->password       = $request->input('password');
+        $user->photo          = $request->input('photo');
+
+        $token = JWTAuth::fromUser($user);
+
+        return response()->json(compact('user','token'),201);
+    }
+
     public function login(Request $request)
     {
+        $profil = User::where('phone', $request->input('phone'));
+        $profil = $profil->first();
+                    // dd($profil);
+        // if($profil == null) {
+        // return response()->json(['send' => 'NO', 404]);
+        // } else {
+        //     return response()->json(['send' => 'YES', 200]);
+        // }
         $credentials = $request->only('phone', 'password');
-
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
                 return response()->json(['error' => 'invalid_credentials'], 400);
@@ -23,16 +65,16 @@ class UserChatController extends Controller
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
 
-        return response()->json(compact('token'));
+        return response()->json(compact('profil', 'token'));
     }
 
     protected function respondWithToken($token)
     {
-    return response()->json([
-        'access_token' => $token,
-        'token_type' => 'bearer',
-        'expires_in' => auth('api')->factory()->getTTL() * 60
-    ]);
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth('api')->factory()->getTTL() * 60
+        ]);
     }
 
     public function register(Request $request)
@@ -53,6 +95,7 @@ class UserChatController extends Controller
             'password' => bcrypt($request->input('password')),
             'photo' => asset('img/profil.jpg')
         ]);
+        $photo = $request->file('photo');
 
         $token = JWTAuth::fromUser($user);
 
