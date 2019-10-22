@@ -16,6 +16,7 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('username');
+            $table->string('bio')->default('Hai, Saya baru bergabung dengan Bchat!');
             $table->string('phone');
             $table->string('password');
             $table->string('photo')->nullable();
