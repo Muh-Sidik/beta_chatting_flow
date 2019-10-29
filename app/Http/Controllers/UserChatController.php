@@ -25,7 +25,6 @@ class UserChatController extends Controller
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
 
-        // return response()->json(compact('token'));
         return $this->respondWithToken($token, $id);
     }
 
@@ -55,7 +54,6 @@ class UserChatController extends Controller
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
 
-        // return response()->json(compact('token'));
         return $this->respondWithToken($token, $id);
     }
 
@@ -71,16 +69,7 @@ class UserChatController extends Controller
 
     public function register(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'username' => 'required|string|max:255',
-        //     'phone' => 'required|string|max:14',
-        //     'password' => 'required|string|min:6',
-        // ]);
-
-        // if($validator->fails()){
-        //     return response()->json($validator->errors()->toJson(), 400);
-        // }
-
+        
         $user = User::create([
             'username'  => $request->input('username'),
             'phone'     => $request->input('phone'),
@@ -93,7 +82,6 @@ class UserChatController extends Controller
         $id = $get->first(); 
         return $this->respondWithToken($token, $id);
 
-        // return response()->json(['send'=> 'data masuk cuk!'],201);
     }
 
     public function getAuthenticatedUser()
@@ -121,28 +109,28 @@ class UserChatController extends Controller
         return response()->json(compact('user'));
     }
 
-    public function update_profil(Request $request)
+    public function update(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'username' => 'required|string|max:255',
-        //     'phone' => 'required|string|max:14',
-        //     'password' => 'required|string|min:6',
-        // ]);
-        // if($validator->fails()){
-        //     return response()->json($validator->errors()->toJson(), 400);
-        // }
         
         $user = User::find($request->id);
         $user->username       = $request->input('username');
         $user->bio            = $request->input('bio');
         $user->phone          = $request->input('phone');
-        $user->password       = $request->input('password');
+        $user->password       =bcrypt($request->input('password'));
         $user->photo          = $request->input('photo');
-
-        $token = JWTAuth::fromUser($user);
         
-        return response()->json(compact('user','token'),200);
+        // $token = JWTAuth::fromUser($user);
+
+        if($user->save()) {
+            return response()->json([$user],200);
+        }
     }
 
-    
+    public function delete_user($id)
+    {
+        $delete = User::find($id);
+        if($delete->delete()) {
+            return response()->json(['status' => 'user dihapus'], 200);
+        }
+    }
 }

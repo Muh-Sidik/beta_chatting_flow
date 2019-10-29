@@ -11,6 +11,12 @@
 |
 */
 
+use App\DetailChat;
+
 Broadcast::channel('App.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
+});
+
+Broadcast::channel('chat.{chat}', function ($user, DetailChat $chat) {
+    return $user->id === $chat->chat ;
 });

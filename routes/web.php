@@ -43,4 +43,4 @@ Route::post('/messages', 'MessageChatController@sendchat');
 Route::post('login/QR/{phone}/{password}', 'UserChatController@qr');
 
 //delete_chat
-Route::get('/delete', 'MessageChatController@delete_chat');
+Route::delete('/delete', 'MessageChatController@delete_chat');

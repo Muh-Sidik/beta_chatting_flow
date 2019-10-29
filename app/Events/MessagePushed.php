@@ -18,6 +18,7 @@ class MessagePushed implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+
     /**
      * Create a new event instance.
      *
@@ -25,14 +26,13 @@ class MessagePushed implements ShouldBroadcast
      */
 
     public $message;
-    // public $user;
-    // public $chat;
+    
     
     public function __construct($message)
     {
-        // $this->user = $user;
+        
         $this->message = $message;
-        // $this->chat = $chat;
+        
     }
 
     /**
@@ -48,6 +48,5 @@ class MessagePushed implements ShouldBroadcast
     public function broadcastAs()
     {
         return 'my-event';
-        // event(new MessagePushed($user, $message, $chat));
     }
 }

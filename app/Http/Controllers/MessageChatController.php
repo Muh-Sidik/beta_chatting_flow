@@ -15,6 +15,7 @@ class MessageChatController extends Controller
         
         $profil = User::find($id);
         $chat = Chat::where('chats.id_user1', $id)
+        ->orwhere('chats.id_user2', $id)
         ->select('*','users.username AS lawan', 'users.photo AS avatar')
         ->join('users','users.id', '=', 'chats.id_user2')->get();
         $count = DetailChat::where('status', '=', 0)
@@ -28,19 +29,20 @@ class MessageChatController extends Controller
         return response()->json(compact('chat', 'read'),200);
     }
 
-    public function getDetail($id)
+    public function getDetail($no_detail_chat)
     {
-        
-        $detail = \App\DetailChat::where('detail_chats.no_detail_chat', $id)
+        // event(new MessagePushed($message));
+        $detail = \App\DetailChat::where('detail_chats.no_detail_chat', $no_detail_chat)
         ->join('users','users.id', '=', 'detail_chats.id_user_from')
+        ->join('chats','chats.no_detail_chat', '=', 'detail_chats.no_detail_chat')
+        ->orderBy('detail_chats.id', 'asc')
         ->get();
 
-        return response()->json([$detail], 200);
+        return response()->json($detail, 200);
     }
 
     public function search($id)
     {
-        // event(new MessagePushed($user, $message, $chat));
         $search = \App\DetailChat::where('detail_chats.chat', 'like', $_GET['search'])
         ->where('detail_chats.no_detail_chat', $id)
         ->join('users','users.id', '=', 'detail_chats.id_user_from')
@@ -87,18 +89,19 @@ class MessageChatController extends Controller
         }
     }
 
-    public function unread_chat(Request $request)
+    public function edit_chat(Request $request)
     {
-        
-    }
 
-    public function edit_chat($from, $to, Request $request)
-    {
+        $from = $request->input('id_user1');
+        $to = $request->input('id_user2');
         $room = Chat::where('id_user1', $from)
-                ->where('id_user2', $to)->first();
+        ->where('id_user2', $to)->count();
+        
         $edit = DetailChat::find($request->input('id'));
         $edit->no_detail_chat = $room->no_detail_chat;
         $edit->chat = $request->input('chat');
+        $edit->id_user1 = $from;
+        $edit->id_user2 = $to;
         $edit->id_user_from = $request->input('id_user_from');
         $edit->id_user_to = $request->input('id_user_to');
         if($edit->save()) {
@@ -107,10 +110,9 @@ class MessageChatController extends Controller
 
     }
 
-
     public function delete_chat($chat)
     {
-        $delete = DetailChat::where('chat', $chat);
+        $delete = DetailChat::where('chat',$chat);
         if($delete->delete()) {
             return response()->json(['status' => 'success delete', 200]);
         }
